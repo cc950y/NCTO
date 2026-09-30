@@ -19,6 +19,9 @@ try:
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
         FROM databricks_demo.cc950y.techdev_elbaz
+        WHERE Vndr_Name IS NOT NULL
+          AND CFAS_Project IS NOT NULL
+          AND AMOUNT IS NOT NULL
         """
         summary = pd.read_sql(query, conn)
 
@@ -31,6 +34,8 @@ try:
             Vndr_Name,
             SUM(CAST(AMOUNT AS DOUBLE)) AS spend
         FROM databricks_demo.cc950y.techdev_elbaz
+        WHERE Vndr_Name IS NOT NULL
+          AND AMOUNT IS NOT NULL
         GROUP BY Vndr_Name
         ORDER BY spend DESC
         LIMIT 20
