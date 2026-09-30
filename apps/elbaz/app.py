@@ -31,20 +31,20 @@ try:
         st.metric("Projects", f"{summary['project_count'][0]:,.0f}")
 
         vendor_query = """
-     SELECT
+SELECT
     Vndr_Name,
     SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
 FROM databricks_demo.cc950y.techdev_elbaz
 WHERE PLAN_TYPE = 'ACTUALS'
-  AND COST_TYPE = 'Maintenance'
-  AND SI2_ROADMAP <> 'Divested'
-  AND Cash_Group___PRISM <> 'Employee Related Cash'
+AND Cash_Group___PRISM IN ('Fixed Bid Cash', 'T&M Cash', 'Other Contractor Cash')
   AND Vndr_Name IS NOT NULL
+  AND Vndr_No IS NOT NULL
+  AND Purchase_Order_No IS NOT NULL
   AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
   AND TRIM(Vndr_Name) <> ''
 GROUP BY Vndr_Name
 ORDER BY spend DESC
-        LIMIT 20
+LIMIT 20
         """
         vendor_df = pd.read_sql(vendor_query, conn)
 
