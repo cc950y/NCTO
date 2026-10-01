@@ -40,6 +40,7 @@ AND Cash_Group___PRISM IN ('Fixed Bid Cash', 'T&M Cash', 'Other Contractor Cash'
   AND Vndr_Name IS NOT NULL
   AND Vndr_No IS NOT NULL
   AND Purchase_Order_No IS NOT NULL
+  AND COST_TYPE2 = 'Maintenance'
   AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
   AND TRIM(Vndr_Name) <> ''
 GROUP BY Vndr_Name
