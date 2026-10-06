@@ -5,8 +5,6 @@ from databricks.sdk import WorkspaceClient
 import pandas as pd
 
 st.title("Elbaz TechDev Dashboard")
-st.subheader("Top Vendors")
-st.bar_chart(vendor_df.set_index("Vndr_Name"))
 
 cfg = Config()
 
@@ -16,67 +14,77 @@ try:
         http_path="/sql/1.0/warehouses/ac057f17ebf78619",
         credentials_provider=lambda: cfg.authenticate,
     ) as conn:
+
+        # Summary Metrics
         query = """
         SELECT
-            SUM(CAST(AMOUNT AS DOUBLE)) AS total_spend,
+            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS total_spend,
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
         FROM databricks_demo.cc950y.techdev_elbaz
         WHERE PLAN_TYPE = 'ACTUALS'
           AND Vndr_Name IS NOT NULL
           AND CFAS_Project IS NOT NULL
-          AND AMOUNT IS NOT NULL
         """
+
         summary = pd.read_sql(query, conn)
 
-        st.metric("Total Spend", f"${summary['total_spend'][0]:,.0f}")
-        st.metric("Vendors", f"{summary['vendor_count'][0]:,.0f}")
-        st.metric("Projects", f"{summary['project_count'][0]:,.0f}")
+        st.metric("Total Spend", f"${summary['total_spend'][0\]:,.0f}")
+        st.metric("Vendors", f"{summary['vendor_count'][0\]:,.0f}")
+        st.metric("Projects", f"{summary['project_count'][0\]:,.0f}")
 
+        # Vendor Chart
         vendor_query = """
-SELECT
-    Vndr_Name,
-    SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
-FROM databricks_demo.cc950y.techdev_elbaz
-WHERE PLAN_TYPE = 'ACTUALS'
-AND Cash_Group___PRISM IN ('Fixed Bid Cash', 'T&M Cash', 'Other Contractor Cash')
-  AND Vndr_Name IS NOT NULL
-  AND Vndr_No IS NOT NULL
-  AND Purchase_Order_No IS NOT NULL
-  AND COST_TYPE2 = 'Maintenance'
-  AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
-  AND TRIM(Vndr_Name) <> ''
-GROUP BY Vndr_Name
-ORDER BY spend DESC
-LIMIT 20
+        SELECT
+            Vndr_Name,
+            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
+        FROM databricks_demo.cc950y.techdev_elbaz
+        WHERE PLAN_TYPE = 'ACTUALS'
+          AND Cash_Group___PRISM IN (
+                'Fixed Bid Cash',
+                'T&M Cash',
+                'Other Contractor Cash'
+          )
+          AND Vndr_Name IS NOT NULL
+          AND Vndr_No IS NOT NULL
+          AND Purchase_Order_No IS NOT NULL
+          AND COST_TYPE2 = 'Maintenance'
+          AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
+          AND TRIM(Vndr_Name) <> ''
+        GROUP BY Vndr_Name
+        ORDER BY spend DESC
+        LIMIT 20
         """
+
         vendor_df = pd.read_sql(vendor_query, conn)
 
         st.subheader("Top Vendors")
         st.bar_chart(vendor_df.set_index("Vndr_Name"))
 
-st.divider()
+        # Genie Chat
+        st.divider()
+        st.subheader("Ask Technology Development Agent")
 
-st.subheader("Ask Technology Development Agent")
+        w = WorkspaceClient(config=cfg)
 
-w = WorkspaceClient()
+        question = st.chat_input(
+            "Ask a question about TechDev spend..."
+        )
 
-question = st.chat_input(
-    "Ask a question about TechDev spend..."
-)
+        if question:
 
-if question:
+            with st.spinner("Thinking..."):
 
-    conversation = w.genie.start_conversation(
-        space_id="01f1bb78cc7c10cc904a40bf5e06223a",
-        content=question
-    )
+                conversation = w.genie.start_conversation(
+                    space_id="01f1bb78cc7c10cc904a40bf5e06223a",
+                    content=question
+                )
 
-    result = conversation.result()
+                result = conversation.result()
 
-    for attachment in result.attachments:
-        if attachment.text:
-            st.write(attachment.text.content)
+                for attachment in result.attachments:
+                    ift:
+                        st.write(attachment.text.content)
 
 except Exception as e:
     st.error(str(e))
