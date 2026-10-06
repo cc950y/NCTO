@@ -29,9 +29,9 @@ try:
 
         summary = pd.read_sql(query, conn)
 
-        st.metric("Total Spend", f"${summary['total_spend'][0\]:,.0f}")
-        st.metric("Vendors", f"{summary['vendor_count'][0\]:,.0f}")
-        st.metric("Projects", f"{summary['project_count'][0\]:,.0f}")
+        st.metric("Total Spend", f"${summary['total_spend'][0]:,.0f}")
+        st.metric("Vendors", f"{summary['vendor_count'][0]:,.0f}")
+        st.metric("Projects", f"{summary['project_count'][0]:,.0f}")
 
         # Vendor Chart
         vendor_query = """
@@ -83,7 +83,7 @@ try:
                 result = conversation.result()
 
                 for attachment in result.attachments:
-                    ift:
+                    if attachment.text:
                         st.write(attachment.text.content)
 
 except Exception as e:
