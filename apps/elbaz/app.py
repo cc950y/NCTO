@@ -1,9 +1,12 @@
 import streamlit as st
 from databricks import sql
 from databricks.sdk.core import Config
+from databricks.sdk import WorkspaceClient
 import pandas as pd
 
 st.title("Elbaz TechDev Dashboard")
+st.subheader("Top Vendors")
+st.bar_chart(vendor_df.set_index("Vndr_Name"))
 
 cfg = Config()
 
@@ -51,6 +54,29 @@ LIMIT 20
 
         st.subheader("Top Vendors")
         st.bar_chart(vendor_df.set_index("Vndr_Name"))
+
+st.divider()
+
+st.subheader("Ask Technology Development Agent")
+
+w = WorkspaceClient()
+
+question = st.chat_input(
+    "Ask a question about TechDev spend..."
+)
+
+if question:
+
+    conversation = w.genie.start_conversation(
+        space_id="01f1bb78cc7c10cc904a40bf5e06223a",
+        content=question
+    )
+
+    result = conversation.result()
+
+    for attachment in result.attachments:
+        if attachment.text:
+            st.write(attachment.text.content)
 
 except Exception as e:
     st.error(str(e))
