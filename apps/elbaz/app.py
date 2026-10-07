@@ -21,7 +21,7 @@ try:
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS total_spend,
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
-        FROM databricks_demo.cc950y.techdev_elbaz
+        FROM databricks_demo.cc950y.techdev_vendor_spend
         WHERE PLAN_TYPE = 'ACTUALS'
           AND Vndr_Name IS NOT NULL
           AND CFAS_Project IS NOT NULL
@@ -38,7 +38,7 @@ try:
         SELECT
             Vndr_Name,
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
-        FROM databricks_demo.cc950y.techdev_elbaz
+        FROM databricks_demo.cc950y.techdev_vendor_spend
         WHERE PLAN_TYPE = 'ACTUALS'
           AND Cash_Group___PRISM IN (
                 'Fixed Bid Cash',
