@@ -117,23 +117,23 @@ try:
                 "Projects",
                 f"{summary['project_count'][0]:,.0f}"
             )
-
         with col4:
             if not largest_vendor.empty:
-                vendor_name = largest_vendor["Vndr_Name"][0]
-                vendor_spend = largest_vendor["spend"][0]
+                vendor_name = largest_vendor["Vndr_Name"].iloc[0]
+                vendor_spend = largest_vendor["spend"].iloc[0]
 
                 st.metric(
-                    "Largest Vendor",
-                    vendor_name,
-                    pend:,.0f} spend",
+                    label="Largest Vendor",
+                    value=vendor_name,
+                    delta="${:,.0f} spend".format(vendor_spend),
                     delta_color="off"
-                )
+        )
             else:
                 st.metric(
-                    "Largest Vendor",
-                    "N/A"
+                    label="Largest Vendor",
+                    value="N/A"
                 )
+
         
         # Vendor Chart
         vendor_query = f"""
