@@ -22,9 +22,6 @@ try:
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
         FROM databricks_demo.cc950y.techdev_vendor_spend
-        WHERE PLAN_TYPE = 'ACTUALS'
-          AND Vndr_Name IS NOT NULL
-          AND CFAS_Project IS NOT NULL
         """
 
         summary = pd.read_sql(query, conn)
@@ -39,16 +36,7 @@ try:
             Vndr_Name,
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
         FROM databricks_demo.cc950y.techdev_vendor_spend
-        WHERE PLAN_TYPE = 'ACTUALS'
-          AND Cash_Group___PRISM IN (
-                'Fixed Bid Cash',
-                'T&M Cash',
-                'Other Contractor Cash'
-          )
-          AND Vndr_Name IS NOT NULL
-          AND Vndr_No IS NOT NULL
-          AND Purchase_Order_No IS NOT NULL
-          AND COST_TYPE2 = 'Maintenance'
+        WHERE Vndr_Name IS NOT NULL
           AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
           AND TRIM(Vndr_Name) <> ''
         GROUP BY Vndr_Name
