@@ -7,6 +7,46 @@ import pandas as pd
 st.title("Elbaz TechDev Dashboard")
 
 cfg = Config()
+st.sidebar.header("Filters")
+
+selected_year = st.sidebar.selectbox(
+    "Year", 
+    ["All", 2023, 2024, 2025, 2026]
+)
+
+selected_cash_group = st.sidebar.selectbox(
+    "Cash Group", 
+    [ 
+        "All",
+        "Fixed Bid Cash",
+        "T&M Cash",
+        "Other Contractor Cash"
+    ]
+)
+
+selected_cost_type = st.sidebar.selectbox(
+    "Cost Type",
+    [
+        "All",
+        "Maintenance",
+        "Enhancing"
+    ]
+)
+filters = []
+if selected_year != "All":
+    filters.append(f"year_num = {selected_year}")
+if selected_cash_group != "All":
+    filters.append(
+        f"Cash_Group___PRISM = '{selected_cash_group}'"
+    )
+if selected_cost_type != "All":
+    filters.append(
+        f"COST_TYPE2 = '{selected_cost_type}'"
+    )
+where_clause = ""
+
+if filters:
+    where_clause = "WHERE " + " AND ".join(filters)
 
 try:
     with sql.connect(
@@ -16,12 +56,13 @@ try:
     ) as conn:
 
         # Summary Metrics
-        query = """
+        query = f"""
         SELECT
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS total_spend,
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
         FROM databricks_demo.cc950y.techdev_vendor_spend
+        {where_clause}
         """
 
         summary = pd.read_sql(query, conn)
