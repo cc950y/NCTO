@@ -58,7 +58,7 @@ try:
         # Summary Metrics
         query = f"""
         SELECT
-            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS total_spend,
+            COALESCE(SUM(TRY_CAST(AMOUNT AS DOUBLE)), 0) AS total_spend,
             COUNT(DISTINCT Vndr_Name) AS vendor_count,
             COUNT(DISTINCT CFAS_Project) AS project_count
         FROM databricks_demo.cc950y.techdev_vendor_spend
@@ -66,27 +66,76 @@ try:
         """
 
         summary = pd.read_sql(query, conn)
-
-        st.metric("Total Spend", f"${summary['total_spend'][0]:,.0f}")
-        st.metric("Vendors", f"{summary['vendor_count'][0]:,.0f}")
-        st.metric("Projects", f"{summary['project_count'][0]:,.0f}")
-
-        # Vendor Chart
+        #Build Vendor Filter
+                # Build Vendor Filter
         vendor_filter = where_clause
 
         if vendor_filter:
             vendor_filter += """
               AND Vndr_Name IS NOT NULL
               AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
-              AND TRIM(Vndr_NAME) <> ''
+              AND TRIM(Vndr_Name) <> ''
             """
         else:
             vendor_filter = """
             WHERE Vndr_Name IS NOT NULL
-                AND UPPER(TRIM(VNDR_NAME)) <> 'NULL'
-                AND TRIM(VNDR_Name) <> ''
+              AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
+              AND TRIM(Vndr_Name) <> ''
             """
+
+        # Largest Vendor
+        largest_vendor_query = f"""
+        SELECT
+            Vndr_Name,
+            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
+        FROM databricks_demo.cc950y.techdev_vendor_spend
+        {vendor_filter}
+        GROUP BY Vndr_Name
+        ORDER BY spend DESC
+        LIMIT 1
+        """
+
+        largest_vendor = pd.read_sql(largest_vendor_query, conn)
+
+        # Executive KPI Row
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric(
+                "Total Contractor Spend",
+                f"${summary['total_spend'][0]:,.0f}"
+            )
+
+        with col2:
+            st.metric(
+                "Vendors",
+                f"{summary['vendor_count'][0]:,.0f}"
+            )
+
+        with col3:
+            st.metric(
+                "Projects",
+                f"{summary['project_count'][0]:,.0f}"
+            )
+
+        with col4:
+            if not largest_vendor.empty:
+                vendor_name = largest_vendor["Vndr_Name"][0]
+                vendor_spend = largest_vendor["spend"][0]
+
+                st.metric(
+                    "Largest Vendor",
+                    vendor_name,
+                    pend:,.0f} spend",
+                    delta_color="off"
+                )
+            else:
+                st.metric(
+                    "Largest Vendor",
+                    "N/A"
+                )
         
+        # Vendor Chart
         vendor_query = f"""
         SELECT
             Vndr_Name,
