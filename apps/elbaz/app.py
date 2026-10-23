@@ -34,7 +34,7 @@ selected_cost_type = st.sidebar.selectbox(
 )
 filters = []
 if selected_year != "All":
-    filters.append(f"year_num = {selected_year}")
+    filters.append(f"year_num = '{selected_year}'")
 if selected_cash_group != "All":
     filters.append(
         f"Cash_Group___PRISM = '{selected_cash_group}'"
@@ -72,14 +72,27 @@ try:
         st.metric("Projects", f"{summary['project_count'][0]:,.0f}")
 
         # Vendor Chart
-        vendor_query = """
+        vendor_filter = where_clause
+
+        if vendor_filter:
+            vendor_filter += """
+              AND Vndr_Name IS NOT NULL
+              AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
+              AND TRIM(Vndr_NAME) <> ''
+            """
+        else:
+            vendor_filter = """
+            WHERE Vndr_Name IS NOT NULL
+                AND UPPER(TRIM(VNDR_NAME)) <> 'NULL'
+                AND TRIM(VNDR_Name) <> ''
+            """
+        
+        vendor_query = f"""
         SELECT
             Vndr_Name,
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
         FROM databricks_demo.cc950y.techdev_vendor_spend
-        WHERE Vndr_Name IS NOT NULL
-          AND UPPER(TRIM(Vndr_Name)) <> 'NULL'
-          AND TRIM(Vndr_Name) <> ''
+        {vendor_filter}
         GROUP BY Vndr_Name
         ORDER BY spend DESC
         LIMIT 20
