@@ -191,7 +191,7 @@ try:
         ORDER BY DATA_YRMO_DT
         """
 
-        monthy_df = pd.read_sql(monthly_query, conn)
+        monthly_df = pd.read_sql(monthly_query, conn)
 
         st.subheader("Monthly Contractor Spend")
 
