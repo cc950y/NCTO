@@ -181,6 +181,7 @@ try:
         st.bar_chart(vendor_df.set_index("Vndr_Name"))
 
         #Monthly Spend Trend
+        monthly_query = f"""
         SELECT
             DATA_YRMO_DT,
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
