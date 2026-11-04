@@ -180,6 +180,24 @@ try:
         st.subheader("Top Vendors")
         st.bar_chart(vendor_df.set_index("Vndr_Name"))
 
+        #Monthly Spend Trend
+        SELECT
+            DATA_YRMO_DT,
+            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
+        FROM databricks_demo.cc950y.techdev_vendor_spend
+        {where_clause}
+        GROUP BY DATA_YRMO_DT
+        ORDER BY DATA_YRMO_DT
+        """
+
+        monthy_df = pd.read_sql(monthly_query, conn)
+
+        st.subheader("Monthly Contractor Spend")
+
+        st.line_chart(
+            monthly_df.set_index("DATA_YRMO_DT")
+        )
+        
         # Genie Chat
         st.divider()
         st.subheader("Ask Technology Development Agent")
