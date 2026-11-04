@@ -56,7 +56,6 @@ try:
             """
  
             vendor_list_df = pd.read_sql(vendor_list_query, conn)
- 
             vendor_options = ["All"] + vendor_list_df["Vndr_Name"].tolist()
  
             selected_vendor = st.sidebar.selectbox(
