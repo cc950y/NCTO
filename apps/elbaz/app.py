@@ -183,12 +183,15 @@ try:
         #Monthly Spend Trend
         monthly_query = f"""
         SELECT
-            DATA_YRMO_DT,
+            TO_DATE(
+                CONCAT(CAST(DATA_YRMO_DT AS STRING), '01'),
+                'yyyyMMdd'
+            ) AS month,
             SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
         FROM databricks_demo.cc950y.techdev_vendor_spend
         {where_clause}
-        GROUP BY DATA_YRMO_DT
-        ORDER BY DATA_YRMO_DT
+        GROUP BY month
+        ORDER BY month
         """
 
         monthly_df = pd.read_sql(monthly_query, conn)
@@ -196,7 +199,7 @@ try:
         st.subheader("Monthly Contractor Spend")
 
         st.line_chart(
-            monthly_df.set_index("DATA_YRMO_DT")
+            monthly_df.set_index("month")
         )
         
         # Genie Chat
