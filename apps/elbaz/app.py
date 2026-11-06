@@ -190,16 +190,6 @@ try:
 
         cash_group_df = pd.read_sql(cash_group_query, conn)
 
-    chart_col1, chart_col2 = st.columns(2)
-
-    with chart_col1:
-        st.subheader("Top Vendors")
-        st.bar_chart(vendor_df.set_index("Vndr_Name"))
-
-    with chart_col2:
-        st.subheader("Spend by Cash Group")
-        st.bar_chart(cash_group_df.set_index("cash_group"))
-
         #Monthly Spend Trend
         monthly_query = f"""
         SELECT
@@ -215,6 +205,19 @@ try:
         """
 
         monthly_df = pd.read_sql(monthly_query, conn)
+    # Connection can close here
+    
+    chart_col1, chart_col2 = st.columns(2)
+
+    with chart_col1:
+        st.subheader("Top Vendors")
+        st.bar_chart(vendor_df.set_index("Vndr_Name"))
+
+    with chart_col2:
+        st.subheader("Spend by Cash Group")
+        st.bar_chart(cash_group_df.set_index("cash_group"))
+
+        
 
         st.subheader("Monthly Contractor Spend")
 
