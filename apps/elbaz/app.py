@@ -222,28 +222,28 @@ try:
             monthly_df.set_index("month")
         )
         
-        # Genie Chat
-        st.divider()
-        st.subheader("Ask Technology Development Agent")
+    # Genie Chat
+    st.divider()
+    st.subheader("Ask Technology Development Agent")
 
-        w = WorkspaceClient(config=cfg)
+    w = WorkspaceClient(config=cfg)
 
-        question = st.chat_input(
-            "Ask a question about TechDev spend..."
-        )
+    question = st.chat_input(
+        "Ask a question about TechDev spend..."
+    )
 
-        if question:
-            with st.spinner("Thinking..."):
-                conversation = w.genie.start_conversation(
-                    space_id="01f1bb78cc7c10cc904a40bf5e06223a",
-                    content=question
-                )
+    if question:
+        with st.spinner("Thinking..."):
+            conversation = w.genie.start_conversation(
+                space_id="01f1bb78cc7c10cc904a40bf5e06223a",
+                content=question
+            )
 
-                result = conversation.result()
+            result = conversation.result()
 
-                for attachment in result.attachments:
-                    if attachment.text:
-                        st.write(attachment.text.content)
+            for attachment in result.attachments:
+                if attachment.text:
+                    st.write(attachment.text.content)
 
 except Exception as e:
     st.error(str(e))
