@@ -4,7 +4,7 @@ from databricks.sdk.core import Config
 from databricks.sdk import WorkspaceClient
 import pandas as pd
 
-st.title("Elbaz TechDev Dashboard")
+st.title("Elbaz TechDev Dashboard 🚀")
 
 cfg = Config()
 st.sidebar.header("Filters")
