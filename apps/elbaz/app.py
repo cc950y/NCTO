@@ -177,8 +177,28 @@ try:
 
         vendor_df = pd.read_sql(vendor_query, conn)
 
+        # Spend by Cash Group
+        cash_group_query = f"""
+        SELECT
+            Cash_Group___PRISM AS cash_group,
+            SUM(TRY_CAST(AMOUNT AS DOUBLE)) AS spend
+        FROM databricks_demo.cc950y.techdev_vendor_spend
+        {where_clause}
+        GROUP BY Cash_Group___PRISM
+        ORDER BY spend DESC
+        """
+
+        cash_group_df = pd.read_sql(cash_group_query, conn)
+
+    chart_col1, chart_col2 = st.columns(2)
+
+    with chart_col1:
         st.subheader("Top Vendors")
         st.bar_chart(vendor_df.set_index("Vndr_Name"))
+
+    with chart_col2:
+        st.subheader("Spend by Cash Group")
+        st.bar_chart(cash_group_df.set_index("cash_group"))
 
         #Monthly Spend Trend
         monthly_query = f"""
