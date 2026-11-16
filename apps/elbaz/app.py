@@ -4,6 +4,91 @@ from databricks.sdk.core import Config
 from databricks.sdk import WorkspaceClient
 import pandas as pd
 
+st.set_page_config(
+    page_title="Elbaz TechDev Dashboard",
+    page_icon="📊",
+    layout="wide",
+)
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #F3F4F6;
+        color: #1F2937;
+    }
+
+    .stApp > header {
+        background-color: transparent;
+    }
+
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1440px;
+    }
+
+    h1, h2, h3 {
+        color: #1F2937;
+        letter-spacing: -0.02em;
+    }
+
+    h1 {
+        font-weight: 700;
+    }
+
+    [data-testid="stSidebar"] {
+        background-color: #FFFFFF;
+        border-right: 1px solid #D9DEE5;
+    }
+
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] label {
+        color: #1F2937;
+    }
+
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+        background-color: #FFFFFF;
+        border-color: #D9DEE5;
+        border-radius: 8px;
+    }
+
+    [data-testid="stMetric"] {
+        background-color: #FFFFFF;
+        border: 1px solid #D9DEE5;
+        border-top: 3px solid #0057B8;
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 2px 6px rgba(31, 41, 55, 0.05);
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #6B7280;
+        font-weight: 600;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #0057B8;
+        font-weight: 700;
+    }
+
+    [data-testid="stMetricDelta"] {
+        color: #00A8E0;
+    }
+
+    [data-testid="stChatInput"] {
+        border-color: #D9DEE5;
+        border-radius: 10px;
+    }
+
+    hr {
+        border-color: #D9DEE5;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.title("Elbaz TechDev Dashboard 🚀")
 
 cfg = Config()
