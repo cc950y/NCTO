@@ -67,7 +67,6 @@ st.markdown(
     [data-testid="stMetric"] {
         background-color: #FFFFFF;
         border: 1px solid #D9DEE5;
-        border-top: 3px solid #0057B8;
         border-radius: 8px;
         padding: 0.85rem 1rem;
         box-shadow: 0 1px 3px rgba(31, 41, 55, 0.04);
@@ -75,16 +74,21 @@ st.markdown(
 
     [data-testid="stMetricLabel"] {
         color: #6B7280;
+        font-size: 0.8rem;
         font-weight: 600;
     }
 
     [data-testid="stMetricValue"] {
         color: #0057B8;
+        font-size: clamp(1.1rem, 1.5vw, 1.65rem);
         font-weight: 700;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
     }
 
     [data-testid="stMetricDelta"] {
         color: #00A8E0;
+        font-size: 0.8rem;
     }
 
     [data-testid="stVegaLiteChart"] {
