@@ -59,10 +59,39 @@ st.markdown(
         color: #1F2937;
     }
 
-    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+        gap: 0.65rem;
+    }
+
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    [data-testid="stMultiSelect"] [data-baseweb="select"] > div {
         background-color: #FFFFFF;
         border-color: #D9DEE5;
         border-radius: 8px;
+        min-height: 2.5rem;
+        box-shadow: none;
+    }
+
+    [data-testid="stSelectbox"] label,
+    [data-testid="stMultiSelect"] label {
+        color: #6B7280;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #FFFFFF;
+        border: 1px solid #D9DEE5;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(31, 41, 55, 0.05);
+    }
+
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stPlotlyChart"] {
+        background-color: transparent;
+        border: 0;
+        padding: 0;
+        box-shadow: none;
     }
 
     [data-testid="stMetric"] {
@@ -345,18 +374,19 @@ try:
     chart_col1, chart_col2 = st.columns(2)
 
     with chart_col1:
-        st.subheader("Top Vendors")
-        vendor_chart = px.bar(
-            vendor_df,
-            x="Vndr_Name",
-            y="spend",
-            color_discrete_sequence=["#0057B8"],
-        )
-        st.plotly_chart(
-            style_finance_chart(vendor_chart),
-            use_container_width=True,
-            config={"displayModeBar": False},
-        )
+        with st.container(border=True):
+            st.subheader("Top Vendors")
+            vendor_chart = px.bar(
+                vendor_df,
+                x="Vndr_Name",
+                y="spend",
+                color_discrete_sequence=["#0057B8"],
+            )
+            st.plotly_chart(
+                style_finance_chart(vendor_chart),
+                use_container_width=True,
+                config={"displayModeBar": False},
+            )
 
     with chart_col2:
         st.subheader("Spend by Cash Group")
