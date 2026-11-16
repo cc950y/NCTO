@@ -424,23 +424,54 @@ try:
         st.subheader("Ask Technology Development Agent")
 
         w = WorkspaceClient(config=cfg)
+        space_id = "01f1bb78cc7c10cc904a40bf5e06223a"
+        conversation_key = "elbaz_genie_conversation_id"
+        messages_key = "elbaz_genie_messages"
+
+        st.session_state.setdefault(conversation_key, None)
+        st.session_state.setdefault(messages_key, [])
+
+        for message in st.session_state[messages_key]:
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
 
         question = st.chat_input(
             "Ask a question about TechDev spend..."
         )
 
         if question:
-            with st.spinner("Thinking..."):
-                conversation = w.genie.start_conversation(
-                    space_id="01f1bb78cc7c10cc904a40bf5e06223a",
-                    content=question
-                )
+            st.session_state[messages_key].append(
+                {"role": "user", "content": question}
+            )
+            with st.chat_message("user"):
+                st.write(question)
 
-                result = conversation.result()
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    conversation_id = st.session_state[conversation_key]
+                    if conversation_id is None:
+                        result = w.genie.start_conversation(
+                            space_id=space_id,
+                            content=question,
+                        ).result()
+                        st.session_state[conversation_key] = result.conversation_id
+                    else:
+                        result = w.genie.create_message(
+                            space_id=space_id,
+                            conversation_id=conversation_id,
+                            content=question,
+                        ).result()
 
-                for attachment in result.attachments:
-                    if attachment.text:
-                        st.write(attachment.text.content)
+                    response_text = "\n\n".join(
+                        attachment.text.content
+                        for attachment in result.attachments
+                        if attachment.text
+                    )
+                    if response_text:
+                        st.write(response_text)
+                        st.session_state[messages_key].append(
+                            {"role": "assistant", "content": response_text}
+                        )
 
 except Exception as e:
     st.error(str(e))
