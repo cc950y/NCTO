@@ -3,6 +3,7 @@ from databricks import sql
 from databricks.sdk.core import Config
 from databricks.sdk import WorkspaceClient
 import pandas as pd
+import plotly.express as px
 
 st.set_page_config(
     page_title="Elbaz TechDev Dashboard",
@@ -91,7 +92,7 @@ st.markdown(
         font-size: 0.8rem;
     }
 
-    [data-testid="stVegaLiteChart"] {
+    [data-testid="stPlotlyChart"] {
         background-color: #FFFFFF;
         border: 1px solid #D9DEE5;
         border-radius: 8px;
@@ -111,6 +112,32 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+
+def style_finance_chart(figure):
+    figure.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#374151"),
+        margin=dict(l=20, r=20, t=40, b=20),
+        legend=dict(orientation="h"),
+        showlegend=False,
+    )
+    figure.update_xaxes(
+        showgrid=False,
+        showline=False,
+        zeroline=False,
+        title=None,
+    )
+    figure.update_yaxes(
+        showgrid=True,
+        gridcolor="#E5E7EB",
+        showline=False,
+        zeroline=False,
+        title=None,
+    )
+    return figure
+
 
 st.title("Elbaz TechDev Dashboard 🚀")
 
@@ -319,18 +346,46 @@ try:
 
     with chart_col1:
         st.subheader("Top Vendors")
-        st.bar_chart(vendor_df.set_index("Vndr_Name"))
+        vendor_chart = px.bar(
+            vendor_df,
+            x="Vndr_Name",
+            y="spend",
+            color_discrete_sequence=["#0057B8"],
+        )
+        st.plotly_chart(
+            style_finance_chart(vendor_chart),
+            use_container_width=True,
+            config={"displayModeBar": False},
+        )
 
     with chart_col2:
         st.subheader("Spend by Cash Group")
-        st.bar_chart(cash_group_df.set_index("cash_group"))
+        cash_group_chart = px.bar(
+            cash_group_df,
+            x="cash_group",
+            y="spend",
+            color_discrete_sequence=["#00A8E0"],
+        )
+        st.plotly_chart(
+            style_finance_chart(cash_group_chart),
+            use_container_width=True,
+            config={"displayModeBar": False},
+        )
 
         
 
         st.subheader("Monthly Contractor Spend")
 
-        st.line_chart(
-            monthly_df.set_index("month")
+        monthly_chart = px.line(
+            monthly_df,
+            x="month",
+            y="spend",
+            color_discrete_sequence=["#0057B8"],
+        )
+        st.plotly_chart(
+            style_finance_chart(monthly_chart),
+            use_container_width=True,
+            config={"displayModeBar": False},
         )
         
     # Genie Chat
