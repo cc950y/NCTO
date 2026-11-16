@@ -16,6 +16,7 @@ st.markdown(
     .stApp {
         background-color: #F3F4F6;
         color: #1F2937;
+        font-family: "Inter", "Segoe UI", sans-serif;
     }
 
     .stApp > header {
@@ -23,9 +24,12 @@ st.markdown(
     }
 
     .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+        padding: 1.5rem 2rem;
         max-width: 1440px;
+    }
+
+    [data-testid="stVerticalBlock"] {
+        gap: 0.85rem;
     }
 
     h1, h2, h3 {
@@ -35,6 +39,13 @@ st.markdown(
 
     h1 {
         font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    h2, h3 {
+        color: #0057B8;
+        font-weight: 650;
+        margin-bottom: 0.35rem;
     }
 
     [data-testid="stSidebar"] {
@@ -57,9 +68,9 @@ st.markdown(
         background-color: #FFFFFF;
         border: 1px solid #D9DEE5;
         border-top: 3px solid #0057B8;
-        border-radius: 10px;
-        padding: 1rem 1.1rem;
-        box-shadow: 0 2px 6px rgba(31, 41, 55, 0.05);
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 1px 3px rgba(31, 41, 55, 0.04);
     }
 
     [data-testid="stMetricLabel"] {
@@ -76,9 +87,17 @@ st.markdown(
         color: #00A8E0;
     }
 
+    [data-testid="stVegaLiteChart"] {
+        background-color: #FFFFFF;
+        border: 1px solid #D9DEE5;
+        border-radius: 8px;
+        padding: 0.6rem;
+        box-shadow: 0 1px 3px rgba(31, 41, 55, 0.04);
+    }
+
     [data-testid="stChatInput"] {
         border-color: #D9DEE5;
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     hr {
