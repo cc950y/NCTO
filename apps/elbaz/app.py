@@ -425,11 +425,15 @@ try:
 
         w = WorkspaceClient(config=cfg)
         space_id = "01f1bb78cc7c10cc904a40bf5e06223a"
-        conversation_key = "elbaz_genie_conversation_id"
         messages_key = "elbaz_genie_messages"
 
-        st.session_state.setdefault(conversation_key, None)
+        st.session_state.setdefault("genie_conversation_id", None)
         st.session_state.setdefault(messages_key, [])
+
+        if st.button("New conversation", key="new_genie_conversation"):
+            st.session_state["genie_conversation_id"] = None
+            st.session_state[messages_key] = []
+            st.rerun()
 
         for message in st.session_state[messages_key]:
             with st.chat_message(message["role"]):
@@ -448,13 +452,15 @@ try:
 
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
-                    conversation_id = st.session_state[conversation_key]
+                    conversation_id = st.session_state["genie_conversation_id"]
                     if conversation_id is None:
                         result = w.genie.start_conversation(
                             space_id=space_id,
                             content=question,
                         ).result()
-                        st.session_state[conversation_key] = result.conversation_id
+                        st.session_state[
+                            "genie_conversation_id"
+                        ] = result.conversation_id
                     else:
                         result = w.genie.create_message(
                             space_id=space_id,
